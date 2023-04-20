@@ -25,6 +25,7 @@
             android:layout_height="wrap_content" />
 
         <Button
+            android:onClick="@{ () -> viewModel.updateLocationWithCity()}"
             android:id="@+id/search_btn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

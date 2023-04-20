@@ -39,6 +39,22 @@ class SearchViewModel : ViewModel() {
         switchLoading(false)
     }
 
+    fun updateLocationWithCity() = viewModelScope.launch(Dispatchers.IO) {
+        switchLoading(true)
+        val apiService = WeatherApi.getRetrofitInstance().create(WeatherApi::class.java)
+
+        val call = apiService.getWeather(
+            mapOf(
+                "appid" to "d073e28efa11970244b9f726a7bd2623",
+                "q" to "${inputtedCity.value}",
+                "units" to "imperial"
+            )
+        ).execute()
+
+        cityWeather.postValue(call.body())
+        switchLoading(false)
+    }
+
     private suspend fun switchLoading(newValue: Boolean) = withContext(Dispatchers.Main) {
         loading.value = newValue
     }
