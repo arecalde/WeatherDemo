@@ -17,8 +17,8 @@ object LocationHelper {
         Manifest.permission.ACCESS_COARSE_LOCATION)
 
     @SuppressLint("MissingPermission")
-    fun getLocation(context: Context?, updateLocation: (Location) -> Unit) {
-        val locationManager = context?.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+    fun getLocation(context: Context, updateLocation: (Location) -> Unit) {
+        val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as? LocationManager
             ?: return
         val hasGps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         val hasNetwork = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
@@ -40,10 +40,10 @@ object LocationHelper {
         }
     }
 
-    fun checkPermission(context: Context?): Boolean {
+    fun checkPermission(context: Context): Boolean {
         var allSuccess = true
         for (i in permissions.indices) {
-            if (context?.checkCallingOrSelfPermission(permissions[i]) == PackageManager.PERMISSION_DENIED)
+            if (context.checkCallingOrSelfPermission(permissions[i]) == PackageManager.PERMISSION_DENIED)
                 allSuccess = false
         }
         return allSuccess

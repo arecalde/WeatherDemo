@@ -1,17 +1,20 @@
 package com.example.weather.search
 
+import android.app.Application
+import android.content.Context
 import android.location.Location
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.weather.helpers.SharedPreferenceHelper
 import com.example.weather.model.WeatherApi
 import com.example.weather.model.json.WeatherResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel(private val application: Application) : AndroidViewModel(application) {
+    private val context: Context
+        get() = getApplication<Application>().applicationContext
+
     val loading = MutableLiveData(false)
 
     val inputtedCity = MutableLiveData("")
@@ -39,17 +42,29 @@ class SearchViewModel : ViewModel() {
         switchLoading(false)
     }
 
-    fun updateLocationWithCity() = viewModelScope.launch(Dispatchers.IO) {
+    fun updateLocationWithCity() {
+        inputtedCity.value?.let {
+            updateLocationWithCity(it)
+
+        }
+    }
+    fun updateLocationWithCity(city: String) = viewModelScope.launch(Dispatchers.IO) {
         switchLoading(true)
+
+        if (city.isEmpty()) return@launch
+
         val apiService = WeatherApi.getRetrofitInstance().create(WeatherApi::class.java)
 
         val call = apiService.getWeather(
             mapOf(
                 "appid" to "d073e28efa11970244b9f726a7bd2623",
-                "q" to "${inputtedCity.value}",
+                "q" to city,
                 "units" to "imperial"
             )
         ).execute()
+
+        SharedPreferenceHelper.setCity(context, city)
+
 
         cityWeather.postValue(call.body())
         switchLoading(false)

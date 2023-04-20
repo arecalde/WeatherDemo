@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import com.example.weather.databinding.FragmentSearchBinding
 import com.example.weather.helpers.LocationHelper
 import com.example.weather.helpers.PERMISSION_REQUEST
+import com.example.weather.helpers.SharedPreferenceHelper
 
 class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModels()
@@ -23,12 +24,17 @@ class SearchFragment : Fragment() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
-        if (LocationHelper.checkPermission(context)) {
-            LocationHelper.getLocation(context) {
-                viewModel.updateLocation(it)
+        context?.let { appContext ->
+            val city = SharedPreferenceHelper.getCity(appContext)
+            if (!city.isNullOrEmpty()) {
+                viewModel.updateLocationWithCity(city)
+            } else if (LocationHelper.checkPermission(appContext)) {
+                LocationHelper.getLocation(appContext) {
+                    viewModel.updateLocation(it)
+                }
+            } else{
+                requestPermissions(LocationHelper.permissions, PERMISSION_REQUEST)
             }
-        } else{
-            requestPermissions(LocationHelper.permissions, PERMISSION_REQUEST)
         }
 
         return binding.root
@@ -45,9 +51,12 @@ class SearchFragment : Fragment() {
                         Toast.makeText(context, "Go to settings and enable the permission", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    LocationHelper.getLocation(context) {
-                        viewModel.updateLocation(it)
+                    context?.let { appContext ->
+                        LocationHelper.getLocation(appContext) {
+                            viewModel.updateLocation(it)
+                        }
                     }
+
                 }
             }
         }
