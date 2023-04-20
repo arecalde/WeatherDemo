@@ -11,13 +11,28 @@ import android.provider.Settings;
 
 import androidx.core.util.Consumer;
 
+/**
+ * A class to help with location related functions
+ */
 public class LocationHelper {
-    public static final int PERMISSION_REQUEST = 10;
+
+    /**
+     * Universal code for location perm request
+     */
+    public static final int LOCATION_PERMISSION_REQUEST = 10;
+    /**
+     * Two permissions associated with location
+     */
     public static final String[] permissions = {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
+    /**
+     * get a location and feed it to a lambda
+     * @param context Used to retrieve location manager & start settings activity
+     * @param updateLocation a lambda that runs once a location is retrieved
+     */
     @SuppressLint("MissingPermission")
     public static void getLocation(Context context, Consumer<Location> updateLocation) {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -35,6 +50,11 @@ public class LocationHelper {
         }
 
     }
+
+    /**
+     * @param context used to check permission
+     * @return return a bool if the permissions returned are authorized
+     */
     public static boolean checkPermission(Context context) {
         boolean allSuccess = true;
         for (String permission : permissions) {
