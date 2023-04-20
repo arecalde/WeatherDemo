@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.example.weather.databinding.FragmentSearchBinding
 import com.example.weather.helpers.LocationHelper
-import com.example.weather.helpers.PERMISSION_REQUEST
+import com.example.weather.helpers.LocationHelper.PERMISSION_REQUEST
 import com.example.weather.helpers.SharedPreferenceHelper
 
 class SearchFragment : Fragment() {
